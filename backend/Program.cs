@@ -1,8 +1,24 @@
+using FaceItRadar.Data;
+using FaceItRadar.Features.Users;
+using Microsoft.EntityFrameworkCore;
+
 // Load environment variables from .env file
 string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
 DotNetEnv.Env.Load($".env.{environment.ToLower()}");
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Register DbContext
+builder.Services.AddDbContext<AppDbContext>(options =>
+{
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    Console.WriteLine($"Using connection string: {connectionString}");
+    options.UseNpgsql(connectionString);
+});
+
+// Register user service 
+builder.Services.AddScoped<IUserService, UserService>();
+
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
