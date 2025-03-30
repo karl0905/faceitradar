@@ -1,3 +1,7 @@
+// Load environment variables from .env file
+string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
+DotNetEnv.Env.Load($".env.{environment.ToLower()}");
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
