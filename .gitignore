@@ -1,1 +1,7 @@
 .env*
+*.sln
+*.suo
+*.user
+.vs/
+[Bb]in/
+[Oo]bj/
