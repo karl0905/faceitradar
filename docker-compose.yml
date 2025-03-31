@@ -28,7 +28,7 @@ services:
 
   postgres:
     image: postgres:15 # removed -alpine
-    platform: linux/amd64 # ADD THIS LINE
+    platform: linux/amd64
     container_name: faceitradar-db
     env_file:
       - ./.env
@@ -47,6 +47,19 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: faceitradar-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+    ports:
+      - "${PGADMIN_PORT}:80"
+    depends_on:
+      - postgres
+    networks:
+      - faceitradar-network
 
 networks:
   faceitradar-network:
