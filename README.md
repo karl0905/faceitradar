@@ -16,6 +16,9 @@ Create `.env` file in project root with:
 - `POSTGRES_DB=your_database_name`
 - `POSTGRES_PORT=port_number`
 - `BACKEND_PORT=port_number`
+- `PGADMIN_DEFAULT_EMAIL=pgadmin_email`
+- `PGADMIN_DEFAULT_PASSWORD=pgadmin_password`
+- `PGADMIN_PORT=pgadmin_port`
 
 ### Backend Directory
 
