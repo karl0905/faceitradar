@@ -14,7 +14,8 @@ services:
     restart: unless-stopped
     container_name: faceitradar-backend
     healthcheck:
-      test: ["CMD", "/bin/sh", "-c", "wget -q -O- http://localhost:80/ || exit 1"]
+      test:
+        ["CMD", "/bin/sh", "-c", "wget -q -O- http://localhost:80/ || exit 1"]
       interval: 15s
       timeout: 10s
       retries: 3
@@ -26,7 +27,8 @@ services:
       - faceitradar-network
 
   postgres:
-    image: postgres:15-alpine
+    image: postgres:15 # removed -alpine
+    platform: linux/amd64 # ADD THIS LINE
     container_name: faceitradar-db
     env_file:
       - ./.env
