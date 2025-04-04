@@ -13,5 +13,12 @@ namespace FaceItRadar.Features.Users
 
         [Required]
         public string password_hash { get; set; } = string.Empty;
+
+        public void login(string email, string password)
+        {
+            // simple login function for the user model 
+
+        }
     }
+
 }

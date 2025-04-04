@@ -2,16 +2,23 @@ using FaceItRadar.Data;
 using FaceItRadar.Features.Users;
 using Microsoft.EntityFrameworkCore;
 
-// Load environment variables from .env file
-string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Development";
-DotNetEnv.Env.Load($".env.{environment.ToLower()}");
+DotNetEnv.Env.Load(".env");
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Register DbContext
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
-    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+    var host = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true"
+            ? "postgres"  // Use container name when in Docker
+            : "localhost";
+
+    var connectionString = $"Host={host};" +
+                          $"Port={Environment.GetEnvironmentVariable("DB_PORT")};" +
+                          $"Database={Environment.GetEnvironmentVariable("DB_NAME")};" +
+                          $"Username={Environment.GetEnvironmentVariable("DB_USER")};" +
+                          $"Password={Environment.GetEnvironmentVariable("DB_PASSWORD")};";
     Console.WriteLine($"Using connection string: {connectionString}");
     options.UseNpgsql(connectionString);
 });
@@ -19,6 +26,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 // Register user service 
 builder.Services.AddScoped<IUserService, UserService>();
 
+// Health check endpoint 
+builder.Services.AddHealthChecks();
 
 // Add services to the container.
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
@@ -33,10 +42,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseHttpsRedirection();
+// app.UseHttpsRedirection();
 
 // Map controller endpoints
 app.MapControllers();
+app.MapHealthChecks("/health");
 
 // Keep the weather forecast endpoint for now
 var summaries = new[]

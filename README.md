@@ -27,6 +27,15 @@ Create `.env` file in `/backend` with:
 - `ASPNETCORE_ENVIRONMENT=Development`
 - `FACEIT_API_KEY=your_faceit_api_key_here`
 - `LOG_LEVEL=Debug`
+- `DB_PORT=5432`
+- `DB_NAME=your_database_name`
+- `DB_USER=your_db_username`
+- `DB_PASSWORD=your_db_password`
+
+Note: The application automatically determines the database host based on the environment:
+
+- In Docker: Uses "postgres" (container name) - Docker sets `DOTNET_RUNNING_IN_CONTAINER=true` automatically
+- Locally: Uses "localhost" for development
 
 ### DB Directory
 
@@ -49,16 +58,6 @@ docker exec -it faceitradar-db psql -U <db_username> -d <database_name>
 # Or use this one-liner to run a query
 docker exec -it faceitradar-db psql -U <db_username> -d <database_name> -c "SELECT * FROM table_name;"
 ```
-
-## pgAdmin Access
-
-Access pgAdmin at http://localhost:5050 after starting containers.
-
-1. Login with credentials from root `.env` file
-2. Navigate database structure:
-   - Servers → YourServer → Databases → YourDB → Schemas → public → Tables
-3. View table data: Right-click table → View/Edit Data → All Rows
-4. Run SQL queries: Tools → Query Tool
 
 ## Database Migrations
 
