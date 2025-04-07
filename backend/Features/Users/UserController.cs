@@ -40,20 +40,23 @@ namespace FaceItRadar.Features.Users
         [HttpGet("{userId}")]
         public async Task<IActionResult> GetUser(string userId)
         {
-            try
+            var user = await _userService.GetUserByIdAsync(userId);
+            if (user == null)
             {
-                var user = await _userService.GetUserByIdAsync(userId);
-                if (user == null)
-                {
-                    return NotFound(new { error = "User not found" });
-                }
-                return Ok(user);
+                return NotFound(new { error = "User not found" });
             }
-            catch (Exception ex)
+            return Ok(user);
+        }
+        [HttpPost]
+        public async Task<IActionResult> CreateUser([FromBody] CreateUserRequest request)
+        {
+            if (request == null)
             {
-                _logger.LogError(ex, $"Error retrieving user {userId}");
-                return StatusCode(500, new { error = "Internal server error" });
+                return BadRequest(new { error = "Invalid user data" });
             }
+
+            var createdUser = await _userService.CreateUserAsync(request.Email, request.Password);
+            return CreatedAtAction(nameof(GetUser), new { userId = createdUser.user_id }, createdUser);
         }
     }
 }
